@@ -1,26 +1,40 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import * as API from '../Service/API/API.js';
 
 export class App extends Component {
   state = {
     news: [],
     search: '',
-
+    nextPage: '',
   };
 
   handleChange = e => {
     const { name, value } = e.target;
-    this.setState({ [name]: value});
+    this.setState({ [name]: value });
   };
 
-  onSearch = async (e) => {
+  onSearch = async e => {
     e.preventDefault(); // Не дозволяє перезавантажити сторінку
     const { search } = this.state;
     try {
       const newsItem = await API.getNews(search);
-      this.setState({ news: newsItem, search: '' }); // або [...prevState.news, ...newsItem] для додавання
+      this.setState({ news: newsItem.results, nextPage: newsItem.nextPage });
     } catch (error) {
-      console.log("🚀 ~ App ~ onSearch error:", error);
+      console.log('🚀 ~ App ~ onSearch error:', error);
+    }
+  };
+
+  onSearchMore = async e => {
+    e.preventDefault(); // Не дозволяє перезавантажити сторінку
+    const { search, nextPage } = this.state;
+    try {
+      const newsItem = await API.addNews(search, nextPage);
+      this.setState(prevState => ({
+        news: [...prevState.news, ...newsItem.results],
+        nextPage: newsItem.nextPage,
+      }));
+    } catch (error) {
+      console.log('🚀 ~ App ~ onSearch error:', error);
     }
   };
 
@@ -28,12 +42,8 @@ export class App extends Component {
     const { search, news } = this.state;
     return (
       <div>
-        <form
-          onSubmit={this.onSearch}
-        >
-          <button type="submit">
-            Search
-          </button>
+        <form onSubmit={this.onSearch}>
+          <button type="submit">Search</button>
           <input
             type="text"
             name="search"
@@ -45,6 +55,9 @@ export class App extends Component {
             autoComplete="off"
           />
         </form>
+        <button type="click" onClick={this.onSearchMore}>
+          More
+        </button>
         <ul>
           {news.map((item, index) => (
             <li key={item.link || index}>
@@ -57,9 +70,8 @@ export class App extends Component {
           ))}
         </ul>
       </div>
-    )
+    );
   }
 }
 
-export default App
-
+export default App;

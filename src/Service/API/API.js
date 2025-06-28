@@ -8,7 +8,19 @@ export const getNews = async  (value) => {
           language: 'uk', 
         },
       });
-      return response.data.results;
+      return response.data;
 }
 
-export default getNews
+export const addNews = async  (value, page) => {
+  const response = await axios.get('https://newsdata.io/api/1/latest', {
+      params: {
+        apikey: API_KEY,
+        q: value,
+        page: page,
+        language: 'uk', 
+      },
+    });
+    return response.data;
+}
+
+

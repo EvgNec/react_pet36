@@ -1,1 +1,1 @@
-export { default } from './API';
+export { getNews, addNews } from './API';
