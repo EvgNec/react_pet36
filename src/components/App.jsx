@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as API from '../Service/API/API.js';
+import css from './App.module.css';  // <-- Імпортуємо
 
 export class App extends Component {
   state = {
@@ -41,9 +42,9 @@ export class App extends Component {
   render() {
     const { search, news } = this.state;
     return (
-      <div>
-        <form onSubmit={this.onSearch}>
-          <button type="submit">Search</button>
+      <div className={css.container}>
+        <form onSubmit={this.onSearch} className={css.form}>
+          <button type="submit" className={css.button}>Search</button>
           <input
             type="text"
             name="search"
@@ -53,22 +54,26 @@ export class App extends Component {
             value={search}
             autoFocus
             autoComplete="off"
+            className={css.input}
           />
         </form>
-        <button type="click" onClick={this.onSearchMore}>
-          More
-        </button>
-        <ul>
+        <ul className={css.list}>
           {news.map((item, index) => (
-            <li key={item.link || index}>
-              <h3>{item.title}</h3>
+            <li key={item.link || index} className={css.item}>
+              <h3>{item.pubDate} {item.title}</h3>
+              <a href={item.link} target="_blank" rel="noopener noreferrer">
+                Перейти до статті
+              </a>
               <p>{item.description}</p>
               {item.image_url && (
-                <img src={item.image_url} alt={item.title} width="200" />
+                <img src={item.image_url} alt={item.title} width="200" className={css.image} />
               )}
             </li>
           ))}
         </ul>
+        <button type="button" onClick={this.onSearchMore} className={css.button}>
+          More
+        </button>
       </div>
     );
   }
